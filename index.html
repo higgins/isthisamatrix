@@ -3,8 +3,24 @@
     <script src="https://unpkg.com/gifshot@0.4.5/dist/gifshot.min.js"></script>
     <style>
       body {
-            background-image: url("background.jpeg");
-            background-repeat: repeat;
+          margin: 0px;
+          background-image: url("background2.gif");
+          background-repeat: repeat;
+      }
+      #description {
+          background-image: url("background.jpeg");
+          background-repeat: repeat-x;
+          background-size: 300px;
+          text-align: center;
+      }
+      #words {
+          background: white;
+          width: 800px;
+          margin: auto;
+          padding: 10px 80px
+      }
+      #title {
+          width: 100%;
       }
       #allImages {
           display: flex;
@@ -34,13 +50,19 @@
   </head>
   <body>
     <main>
-      <section>
-        <h1>Is This A Matrix?</h1>
-        <button id="makeGif" onclick="makeGif()">Make Gif</button>
-        <button onclick="clearGif()">Clear Gif</button>
-        <div id="gifPreview"></div>
-        <button id="downloadGifButton"><a id="downloadGif" download="isThisAMatrix.gif">Download</a></button>
-        <div id="selected"></div>
+      <section id="description">
+        <div id="words">
+          <div>
+            <img id="title" src="/title.png" />
+          </div>
+          <div>
+            <button id="makeGif" onclick="makeGif()">Make Gif</button>
+            <button onclick="clearGif()">Clear Gif</button>
+          </div>
+          <div id="gifPreview"></div>
+          <button id="downloadGifButton"><a id="downloadGif" download="isThisAMatrix.gif">Download</a></button>
+          <div id="selected"></div>
+        </div>
       </section>
       <section>
         <div id="allImages">
