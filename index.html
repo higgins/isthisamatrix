@@ -7,9 +7,12 @@
           background-image: url("background2.gif");
           background-repeat: repeat;
       }
+      ul {
+          list-style-type: none;
+      }
       #description {
           background-image: url("background.jpeg");
-          background-repeat: repeat-x;
+          background-repeat: repeat;
           background-size: 300px;
           text-align: center;
       }
@@ -41,10 +44,10 @@
           text-decoration: none;
       }
       #downloadGifButton {
-          visibility: hidden;
+          display: none;
       }
       #downloadGifButton.visible {
-          visibility: visible;
+          display: inline-block;
       }
     </style>
   </head>
@@ -56,12 +59,25 @@
             <img id="title" src="/title.png" />
           </div>
           <div>
+            <h1>Make a gif from up to 60 images below.</h1>
+            <p>
+              How much can you rearrange from the 1999 masterpiece <em>The Matrix</em> and
+              still render a coherent story? For example, here is a story in which...
+            </p>
+            <ul>
+              <li><a href="/mrClean.gif" target="_blank">...Morpheus claims Neo didn't clean the house and Neo objects.</a></li>
+              <li><a href="/phoneVendetta.gif" target="_blank">...Neo has an irrational anger toward phones.</a></li>
+              <li><a href="/physicalTherapy.gif" target="_blank">...Morpheus is sure his online shiatsu degree will give some relief.</a></li>
+              <li><a href="/mealPrep.gif" target="_blank">...everyone was hungry but no one bothered to set the table.</a></li>
+            </ul>
+            <p>This is an educational tool by <strong><a target="_blank" href="https://twitter.com/justinprojects">Justin Higgins</a></strong></p>
+            <p>If you like 1FPS narratives, check out <strong><a target="_blank" href="https://24hourhomepage.com">24hourhomepage.com</a></strong></p>
             <button id="makeGif" onclick="makeGif()">Make Gif</button>
             <button onclick="clearGif()">Clear Gif</button>
+            <button id="downloadGifButton"><a id="downloadGif" download="isThisAMatrix.gif">Download</a></button>
           </div>
-          <div id="gifPreview"></div>
-          <button id="downloadGifButton"><a id="downloadGif" download="isThisAMatrix.gif">Download</a></button>
           <div id="selected"></div>
+          <div id="gifPreview"></div>
         </div>
       </section>
       <section>
@@ -567,8 +583,6 @@
           <div class="frame" onclick="selectImage(this)" id="508"><img loading="lazy" src="/selections/508.jpg" /></div>
           <div class="frame" onclick="selectImage(this)" id="509"><img loading="lazy" src="/selections/509.jpg" /></div>
           <div class="frame" onclick="selectImage(this)" id="510"><img loading="lazy" src="/selections/510.jpg" /></div>
-          <div class="frame" onclick="selectImage(this)" id="511"><img loading="lazy" src="/selections/511.jpg" /></div>
-          <div class="frame" onclick="selectImage(this)" id="512"><img loading="lazy" src="/selections/512.jpg" /></div>
           <div class="frame" onclick="selectImage(this)" id="513"><img loading="lazy" src="/selections/513.jpg" /></div>
           <div class="frame" onclick="selectImage(this)" id="514"><img loading="lazy" src="/selections/514.jpg" /></div>
           <div class="frame" onclick="selectImage(this)" id="515"><img loading="lazy" src="/selections/515.jpg" /></div>
@@ -578,9 +592,6 @@
           <div class="frame" onclick="selectImage(this)" id="519"><img loading="lazy" src="/selections/519.jpg" /></div>
           <div class="frame" onclick="selectImage(this)" id="520"><img loading="lazy" src="/selections/520.jpg" /></div>
           <div class="frame" onclick="selectImage(this)" id="521"><img loading="lazy" src="/selections/521.jpg" /></div>
-          <div class="frame" onclick="selectImage(this)" id="522"><img loading="lazy" src="/selections/522.jpg" /></div>
-          <div class="frame" onclick="selectImage(this)" id="523"><img loading="lazy" src="/selections/523.jpg" /></div>
-          <div class="frame" onclick="selectImage(this)" id="524"><img loading="lazy" src="/selections/524.jpg" /></div>
           <div class="frame" onclick="selectImage(this)" id="525"><img loading="lazy" src="/selections/525.jpg" /></div>
           <div class="frame" onclick="selectImage(this)" id="526"><img loading="lazy" src="/selections/526.jpg" /></div>
           <div class="frame" onclick="selectImage(this)" id="528"><img loading="lazy" src="/selections/528.jpg" /></div>
@@ -594,19 +605,28 @@
     let SELECTED = [];
     const selectedContainer = document.getElementById('selected');
     function selectImage(element) {
-        console.log(`/selections/${element.id}.jpg`);
-        if (element.classList.value.indexOf("selectedImage") === -1) {
-            element.classList.add("selectedImage");
-            SELECTED.push(element.id);
-        } else {
-            element.classList.remove("selectedImage");
-            const idx = SELECTED.indexOf(element.id);
-            SELECTED.splice(idx, 1);
+        const currentFrameIndex = SELECTED.length;
+        if (currentFrameIndex === 60) {
+            alert('NOTE: you can only make 1-minute gifs here');
+            return
         }
+        const thumbnail = document.createElement('img');
+        thumbnail.setAttribute('id',`frame_${currentFrameIndex}`);
+        thumbnail.setAttribute('onclick',`removeFrame(${currentFrameIndex})`);
+        thumbnail.src = `/thumbnails/${element.id}.jpg`;
+        selectedContainer.appendChild(thumbnail);
+        SELECTED.push(element.id);
+    }
+    function removeFrame(idx) {
+        const selectedElement = document.getElementById(`frame_${idx}`);
+        selectedElement.remove();
+        SELECTED.splice(idx,1);
     }
     function clearGif() {
         const preview = document.getElementById('gifPreview');
         preview.innerHTML = '';
+        selectedContainer.innerHTML = '';
+        SELECTED = [];
     }
     function makeGif() {
         if (!SELECTED.length) { alert('Select at least 2 frames make animated gif'); }
