@@ -61,7 +61,7 @@
           <div>
             <h1>Make a gif from up to 60 images below.</h1>
             <p>
-              How much can you rearrange from the 1999 masterpiece <em>The Matrix</em> and
+              How much can you rearrange from the 1999 masterpiece <em><a href="https://en.wikipedia.org/wiki/The_Matrix" target="_blank">The Matrix</a></em> and
               still render a coherent story? For example, here is a story in which...
             </p>
             <ul>
@@ -602,8 +602,10 @@
     <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>
   </body>
   <script>
+    let counter = 0;
     let SELECTED = [];
     const selectedContainer = document.getElementById('selected');
+    const downloadButton = document.getElementById('downloadGifButton');
     function selectImage(element) {
         const currentFrameIndex = SELECTED.length;
         if (currentFrameIndex === 60) {
@@ -611,25 +613,37 @@
             return
         }
         const thumbnail = document.createElement('img');
-        thumbnail.setAttribute('id',`frame_${currentFrameIndex}`);
-        thumbnail.setAttribute('onclick',`removeFrame(${currentFrameIndex})`);
+        thumbnail.setAttribute('id',`frame_${counter}`);
+        thumbnail.setAttribute('onclick',`removeFrame(${counter})`);
         thumbnail.src = `/thumbnails/${element.id}.jpg`;
         selectedContainer.appendChild(thumbnail);
         SELECTED.push(element.id);
+        counter++
     }
-    function removeFrame(idx) {
-        const selectedElement = document.getElementById(`frame_${idx}`);
+    function removeFrame(id) {
+        let idx;
+        const parent = document.getElementById('selected');
+        const selectedElement = document.getElementById(`frame_${id}`);
+        for (let i = 0; i < parent.children.length; i++) {
+            if (parent.children[i].id === `frame_${id}`) {
+                idx = i;
+            }
+        }
         selectedElement.remove();
         SELECTED.splice(idx,1);
     }
     function clearGif() {
         const preview = document.getElementById('gifPreview');
+        downloadButton.classList.remove('visible');
         preview.innerHTML = '';
         selectedContainer.innerHTML = '';
         SELECTED = [];
     }
     function makeGif() {
         if (!SELECTED.length) { alert('Select at least 2 frames make animated gif'); }
+        downloadButton.classList.remove('visible');
+        const preview = document.getElementById('gifPreview');
+        preview.innerHTML = '';
         const images = SELECTED.map(imageId => `/withBorder/${imageId}.jpg`);
         gifshot.createGIF({
             images,
@@ -642,15 +656,12 @@
             numWorkers: 20,
         },function(obj) {
             const animatedImage = document.createElement('img');
-            const preview = document.getElementById('gifPreview');
-            const downloadButton = document.getElementById('downloadGifButton');
             const download = document.getElementById('downloadGif');
             animatedImage.src = obj.image;
             preview.appendChild(animatedImage);
             downloadButton.classList.add('visible')
             download.href = obj.image;
         });
-        console.log(SELECTED);
     }
   </script>
 </html>
